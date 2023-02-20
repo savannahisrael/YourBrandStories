@@ -1,9 +1,31 @@
-
+'use client';
+import React, { useState, useEffect } from 'react'
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase';
 import Image from "next/image";
 
 const myLog = require('../assets/log.webp')
 
 const Login = () => {
+    const [error, setError] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+    
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            // dispatch({type:"LOGIN", payload:user})
+            // navitage("/");
+            
+          })
+          .catch((error) => {
+            setError(true);
+          });
+      };
     return (
 
         <div>
@@ -12,16 +34,17 @@ const Login = () => {
                     <div className="md:w-1/2 px-8 md:px-16">
                         <br />
                         <h2 className="font-bold text-2xl text-[#002D74]">Login</h2>
-                        <p className="text-xs mt-4 text-[#002D74]">
+                        <div className="text-xs mt-4 text-[#002D74]">
                             If you are already a member, easily log in
-                        </p>
+                        </div>
                         {/* </div> */}
-                        <form action="" className="flex flex-col gap-4">
+                        <form onSubmit={handleLogin} action="" className="flex flex-col gap-4">
                             <input
                                 className="p-2 mt-8 rounded-xl border"
                                 type="email"
                                 name="email"
                                 placeholder="Email"
+                                onChange={(e)=>setEmail(e.target.value)}
                             />
                             <div className="relative">
                                 <input
@@ -29,12 +52,14 @@ const Login = () => {
                                     type="password"
                                     name="password"
                                     placeholder="Password"
+                                    onChange={(e)=>setPassword(e.target.value)}
                                 />
 
                             </div>
-                            <button className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300">
+                            <button type="submit" className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300">
                                 Login
                             </button>
+                            {error && <span className='font-light text-red-600 mt-[10px] flex justify-center'>Wrong email or password!</span>}
                         </form>
 
                         <div className="mt-6 grid grid-cols-3 items-center text-gray-400">
